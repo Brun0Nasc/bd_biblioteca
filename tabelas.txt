@@ -1,0 +1,187 @@
+-- Table: public.autor
+
+-- DROP TABLE IF EXISTS public.autor;
+
+CREATE TABLE IF NOT EXISTS public.autor
+(
+    id integer NOT NULL DEFAULT nextval('autor_id_seq'::regclass),
+    nome character varying(50) COLLATE pg_catalog."default" NOT NULL,
+    nacionalidade character varying(20) COLLATE pg_catalog."default",
+    data_nasc date,
+    CONSTRAINT autor_pkey PRIMARY KEY (id)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.autor
+    OWNER to postgres;
+
+
+
+
+
+-- Table: public.cliente
+
+-- DROP TABLE IF EXISTS public.cliente;
+
+CREATE TABLE IF NOT EXISTS public.cliente
+(
+    id integer NOT NULL DEFAULT nextval('cliente_id_seq'::regclass),
+    nome character varying(50) COLLATE pg_catalog."default" NOT NULL,
+    cpf character varying(14) COLLATE pg_catalog."default" NOT NULL,
+    telefone character varying(15) COLLATE pg_catalog."default",
+    endereco character varying(80) COLLATE pg_catalog."default",
+    email character varying(50) COLLATE pg_catalog."default",
+    CONSTRAINT cliente_pkey PRIMARY KEY (id),
+    CONSTRAINT cliente_cpf_key UNIQUE (cpf)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.cliente
+    OWNER to postgres;
+
+
+
+
+
+-- Table: public.editora
+
+-- DROP TABLE IF EXISTS public.editora;
+
+CREATE TABLE IF NOT EXISTS public.editora
+(
+    id integer NOT NULL DEFAULT nextval('editora_id_seq'::regclass),
+    nome character varying(50) COLLATE pg_catalog."default" NOT NULL,
+    telefone character varying(15) COLLATE pg_catalog."default",
+    endereco character varying(80) COLLATE pg_catalog."default",
+    CONSTRAINT editora_pkey PRIMARY KEY (id)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.editora
+    OWNER to postgres;
+
+
+
+
+
+-- Table: public.usuarios
+
+-- DROP TABLE IF EXISTS public.usuarios;
+
+CREATE TABLE IF NOT EXISTS public.usuarios
+(
+    id integer NOT NULL DEFAULT nextval('usuarios_id_seq'::regclass),
+    nome character varying(50) COLLATE pg_catalog."default" NOT NULL,
+    cpf character varying(14) COLLATE pg_catalog."default" NOT NULL,
+    telefone character varying(15) COLLATE pg_catalog."default",
+    endereco character varying(80) COLLATE pg_catalog."default",
+    email character varying(50) COLLATE pg_catalog."default",
+    CONSTRAINT usuarios_pkey PRIMARY KEY (id),
+    CONSTRAINT usuarios_cpf_key UNIQUE (cpf)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.usuarios
+    OWNER to postgres;
+
+
+
+
+
+
+
+
+-- Table: public.emprestimo
+
+-- DROP TABLE IF EXISTS public.emprestimo;
+
+CREATE TABLE IF NOT EXISTS public.emprestimo
+(
+    id integer NOT NULL DEFAULT nextval('emprestimo_id_seq'::regclass),
+    data_aluguel date,
+    data_devolucao date,
+    fk_cliente_id integer NOT NULL DEFAULT nextval('emprestimo_fk_cliente_id_seq'::regclass),
+    fk_usuarios_id integer NOT NULL DEFAULT nextval('emprestimo_fk_usuarios_id_seq'::regclass),
+    CONSTRAINT emprestimo_pkey PRIMARY KEY (id),
+    CONSTRAINT emprestimo_fk_cliente_id_fkey FOREIGN KEY (fk_cliente_id)
+        REFERENCES public.cliente (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT emprestimo_fk_usuarios_id_fkey FOREIGN KEY (fk_usuarios_id)
+        REFERENCES public.usuarios (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.emprestimo
+    OWNER to postgres;
+
+
+
+
+
+-- Table: public.livro
+
+-- DROP TABLE IF EXISTS public.livro;
+
+CREATE TABLE IF NOT EXISTS public.livro
+(
+    cod_livro character varying(25) COLLATE pg_catalog."default" NOT NULL,
+    categoria character varying(25) COLLATE pg_catalog."default",
+    ano_lancamento integer,
+    nome character varying(50) COLLATE pg_catalog."default",
+    fk_emprestimo_id integer NOT NULL DEFAULT nextval('livro_fk_emprestimo_id_seq'::regclass),
+    fk_editora_id integer NOT NULL DEFAULT nextval('livro_fk_editora_id_seq'::regclass),
+    CONSTRAINT livro_pkey PRIMARY KEY (cod_livro),
+    CONSTRAINT livro_fk_editora_id_fkey FOREIGN KEY (fk_editora_id)
+        REFERENCES public.editora (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT livro_fk_emprestimo_id_fkey FOREIGN KEY (fk_emprestimo_id)
+        REFERENCES public.emprestimo (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.livro
+    OWNER to postgres;
+
+
+
+
+
+
+
+
+
+
+-- Table: public.autor_livro
+
+-- DROP TABLE IF EXISTS public.autor_livro;
+
+CREATE TABLE IF NOT EXISTS public.autor_livro
+(
+    fk_livro_cod_livro character varying(25) COLLATE pg_catalog."default",
+    fk_autor_id integer NOT NULL DEFAULT nextval('autor_livro_fk_autor_id_seq'::regclass),
+    CONSTRAINT autor_livro_fk_autor_id_fkey FOREIGN KEY (fk_autor_id)
+        REFERENCES public.autor (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT autor_livro_fk_livro_cod_livro_fkey FOREIGN KEY (fk_livro_cod_livro)
+        REFERENCES public.livro (cod_livro) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.autor_livro
+    OWNER to postgres;
