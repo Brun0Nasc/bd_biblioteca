@@ -115,12 +115,13 @@
                     <label for="endereco" class="labelInput">Endereço</label>
                 </div>
                 <br><br>
-                <input type="submit" name="submit" id="submit" value="Cadastrar">
+                <input type="submit" name="submit" id="submit" value="Cadastrar" onclick="limpar()">
             </fieldset>
         </form>
     </div>
     <ul class="squares"></ul>
     <div id="timer"></div>
+    <script src="script.js"></script>
     <script src="animation.js"></script>
     <iframe style="display:none;" name="index" src="index.php"></iframe>
 </body>
